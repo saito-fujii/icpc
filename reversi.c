@@ -33,8 +33,6 @@ void print_board(){
   printf("\t  ");
   for(j = 0; j < 8; j++) printf(" --");
   printf("\n\n");
-  
-
 }
 
 void init_board(){
@@ -94,27 +92,27 @@ int puts_stone(int x, int y, int color){
         count[i]++;
       } else {
         check[i][0] = -1;
+        count[i] = 0;
         break;
       }
     } 
   }
 
-  for(i = 0 ; i < 8 ; i++) {
-    if(check[i][0] != -1){
+  for(i = 0, tmp = 0 ; i < 8 ; i++) tmp += count[i];
+  if(tmp > 0){
       board[y][x] = color;
       reverse_stone(check, color);
-      break;
     }
-  }    
-
-  if(i == 8) return 0;
-  else return 1;
+      
+  return tmp;
+  
 }
 
 int main(){
 
-  int x, y;
+  int x, y, tmp;
   int turn = BLACK;
+  int score[2] = {2, 2};
 
   init_board();
   print_board(); 
@@ -124,12 +122,14 @@ int main(){
     printf("%sのターンだぞ〜\n", color_str[turn]);
     printf("(x, y) :");
     scanf("%d %d", &x, &y);
-    if(puts_stone(x, y, turn) == 0){
-      print_board();
+    if((tmp = puts_stone(x, y, turn)) == 0){
       printf("そこは置けないよ？\n");
     } else {
       turn = color_rev[turn];
       print_board();
+      score[turn] += tmp + 1;
+      score[color_rev[turn]] -= tmp;
+      printf("Score \n WHITE : %d \t BLACK : %d\n\n", score[WHITE], score[BLACK]);
     }
 
   }
